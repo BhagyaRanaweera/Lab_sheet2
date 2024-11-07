@@ -1,41 +1,50 @@
-package com.example.StudentManagementSystem.controller;
+package com.example.controller;
 
-import com.example.StudentManagementSystem.entity.Student;
-import com.example.StudentManagementSystem.service.StudentService;
+import com.example.entity.Student;
+import com.example.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/students")
+@CrossOrigin(origins = "*")
 public class StudentController {
 
     @Autowired
     private StudentService studentService;
 
+    // Save Student REST API
     @PostMapping
-    public Student addStudent(@RequestBody Student student) {
-        return studentService.saveStudent(student);
+    public ResponseEntity<Student> saveStudent(@RequestBody Student student) {
+        return new ResponseEntity<>(studentService.saveStudent(student), HttpStatus.CREATED);
     }
 
+    // Get All Students REST API
     @GetMapping
     public List<Student> getAllStudents() {
         return studentService.getAllStudents();
     }
 
-    @GetMapping("/{id}")
-    public Student getStudentById(@PathVariable Long id) {
-        return studentService.getStudentById(id);
+    // Get Student by ID REST API
+    @GetMapping("{id}")
+    public ResponseEntity<Student> getStudentById(@PathVariable("id") Long studentId) {
+        return new ResponseEntity<>(studentService.getStudentById(studentId), HttpStatus.OK);
     }
 
-    @PutMapping("/{id}")
-    public Student updateStudent(@PathVariable Long id, @RequestBody Student student) {
-        return studentService.updateStudent(id, student);
+    // Update Student REST API
+    @PutMapping("{id}")
+    public ResponseEntity<Student> updateStudent(@PathVariable("id") Long id, @RequestBody Student student) {
+        return new ResponseEntity<>(studentService.updateStudent(student, id), HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}")
-    public void deleteStudent(@PathVariable Long id) {
+    // Delete Student REST API
+    @DeleteMapping("{id}")
+    public ResponseEntity<String> deleteStudent(@PathVariable("id") Long id) {
         studentService.deleteStudent(id);
+        return new ResponseEntity<>("Student deleted successfully.", HttpStatus.OK);
     }
 }
